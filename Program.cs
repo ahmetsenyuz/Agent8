@@ -3,6 +3,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Register the TodoService
+builder.Services.AddSingleton<ITodoService, TodoService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
