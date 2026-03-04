@@ -17,17 +17,31 @@ namespace Agent8.Services
         private readonly ConcurrentDictionary<int, TodoItem> _todos = new ConcurrentDictionary<int, TodoItem>();
         private int _nextId = 1;
 
+        /// <summary>
+        /// Gets all todo items asynchronously
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains all todo items.</returns>
         public Task<IEnumerable<TodoItem>> GetAllTodosAsync()
         {
             return Task.FromResult(_todos.Values.AsEnumerable());
         }
 
+        /// <summary>
+        /// Gets a todo item by its ID asynchronously
+        /// </summary>
+        /// <param name="id">The ID of the todo item to retrieve</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the todo item or null if not found.</returns>
         public Task<TodoItem?> GetTodoByIdAsync(int id)
         {
             _todos.TryGetValue(id, out var todo);
             return Task.FromResult(todo);
         }
 
+        /// <summary>
+        /// Creates a new todo item asynchronously
+        /// </summary>
+        /// <param name="todo">The todo item to create</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the created todo item.</returns>
         public Task<TodoItem> CreateTodoAsync(TodoItem todo)
         {
             if (todo == null)
@@ -38,6 +52,11 @@ namespace Agent8.Services
             return Task.FromResult(todo);
         }
 
+        /// <summary>
+        /// Updates an existing todo item asynchronously
+        /// </summary>
+        /// <param name="todo">The todo item to update</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the updated todo item or null if not found.</returns>
         public Task<TodoItem?> UpdateTodoAsync(TodoItem todo)
         {
             if (todo == null)
@@ -55,13 +74,18 @@ namespace Agent8.Services
             return Task.FromResult<TodoItem>(null);
         }
 
+        /// <summary>
+        /// Deletes a todo item by its ID asynchronously
+        /// </summary>
+        /// <param name="id">The ID of the todo item to delete</param>
+        /// <returns>A task that represents the asynchronous operation. The task result indicates whether the deletion was successful.</returns>
         public Task<bool> DeleteTodoAsync(int id)
         {
             if (_todos.TryRemove(id, out _))
             {
                 return Task.FromResult(true);
             }
-            
+
             return Task.FromResult(false);
         }
     }
