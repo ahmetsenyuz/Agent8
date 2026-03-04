@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Agent8.Models;
 using Agent8.Services;
@@ -21,19 +22,38 @@ namespace Agent8.Pages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostToggleCompletedAsync(int id)
+        public async Task<IActionResult> OnPostAsync(int id, string action)
         {
-            var todo = await _todoService.GetTodoByIdAsync(id);
-            if (todo == null)
+            if (action == "toggle")
             {
-                return NotFound();
+                var todo = await _todoService.GetTodoByIdAsync(id);
+                if (todo == null)
+                {
+                    return NotFound();
+                }
+
+                todo.IsCompleted = !todo.IsCompleted;
+                todo.UpdatedAt = DateTime.UtcNow;
+
+                await _todoService.UpdateTodoAsync(todo);
+
+                return RedirectToPage();
+            }
+            else if (action == "delete")
+            {
+                var result = await _todoService.DeleteTodoAsync(id);
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Todo item deleted successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error deleting todo item.";
+                }
+
+                return RedirectToPage();
             }
 
-            todo.IsCompleted = !todo.IsCompleted;
-            todo.UpdatedAt = DateTime.UtcNow;
-            
-            await _todoService.UpdateTodoAsync(todo);
-            
             return RedirectToPage();
         }
     }
